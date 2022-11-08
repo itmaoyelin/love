@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>爱心</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffd1cd;
+    }
+
+    audio {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="music" src="./video/沉沦与遐想（0.8x）.MP3" autoplay loop="false" autostart></audio>
+  <canvas id="drawHeart"></canvas>
+  <script>
+    var hearts = [];
+    var canvas = document.getElementById('drawHeart');
+    var music = document.getElementById('music')
+    var wW = window.innerWidth;
+    var wH = window.innerHeight;
+    // 创建画布
+    var ctx = canvas.getContext('2d');
+    // 创建图片对象
+    var heartImage = new Image();
+    // heartImage.src = 'icon/像素_爱心.svg';
+    heartImage.src = 'icon/像素_爱心 (1).svg';
+
+    var num = 120;
+
+    init();
+
+    window.addEventListener('resize', function () {
+      wW = window.innerWidth;
+      wH = window.innerHeight;
+    });
+    // 初始化画布大小
+    function init() {
+      canvas.width = wW;
+      canvas.height = wH;
+      for (var i = 0; i < num; i++) {
+        hearts.push(new Heart(i % 5));
+      }
+      requestAnimationFrame(render);
+    }
+
+    function Heart(type) {
+      this.type = type;
+      // 初始化生成范围
+      this.x = Math.random() * wW;
+      this.y = Math.random() * wH;
+
+      this.opacity = Math.random() * .5 + .5;
+
+      // 偏移量
+      this.vel = {
+        x: (Math.random() - .5) * 5,
+        y: (Math.random() - .5) * 5
+      }
+
+      this.initialW = wW * .5;
+      this.initialH = wH * .5;
+      // 缩放比例
+      this.targetScale = Math.random() * .1 + .02; // 最小0.02
+      this.scale = Math.random() * this.targetScale;
+
+    }
+
+    Heart.prototype.draw = function () {
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      ctx.drawImage(heartImage, this.x, this.y, this.width, this.height);
+      ctx.scale(this.scale + 1, this.scale + 1);
+      ctx.restore();
+    }
+    Heart.prototype.update = function () {
+      this.x += this.vel.x;
+      this.y += this.vel.y;
+
+      if (this.x - this.width > wW || this.x + this.width < 0) {
+        // 重新初始化位置
+        this.scale = 0;
+        this.x = Math.random() * wW;
+        this.y = Math.random() * wH;
+      }
+      if (this.y - this.height > wH || this.y + this.height < 0) {
+        // 重新初始化位置
+        this.scale = 0;
+        this.x = Math.random() * wW;
+        this.y = Math.random() * wH;
+      }
+
+      // 放大
+      this.scale += (this.targetScale - this.scale) * .05;
+      this.height = this.scale * this.initialH;
+      this.width = this.height * 1;
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, wW, wH);
+      for (var i = 0; i < hearts.length; i++) {
+        hearts[i].draw();
+        hearts[i].update();
+      }
+      requestAnimationFrame(render);
+    }
+
+    // 点击播放音乐
+
+    canvas.onclick = function () {
+      // console.log(music);
+      if (music.paused) {
+        document.body.style.backgroundColor = '#bcebbd'
+        // 播放音乐
+        music.play()
+      } else {
+        // 暂停音乐
+        music.pause()
+        document.body.style.backgroundColor = '#ffd1cd'
+      }
+    }
+  </script>
+</body>
+
+</html>

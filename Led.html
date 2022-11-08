@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .canvasMain {
+      border: 10px solid black;
+      background-color: #1e1e1e;
+    }
+
+    .divMain {
+      width: 620px;
+      height: 120px;
+      margin: 0 auto;
+    }
+
+    .panel {}
+
+    .footer {
+      width: 620px;
+      height: 500px;
+      margin: 0 auto;
+      border: 1px solid blueviolet;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="divMain">
+    <canvas width="600px" height="100px" id="ca" class="canvasMain"></canvas>
+  </div>
+  <footer class="footer">
+    <div style="height: 50px;"></div>
+    <div style="width: 620px;">
+      <textarea id="text" rows="3" cols="30"></textarea>
+      <button onclick="send()">发送</button>
+    </div>
+  </footer>
+  <script>
+    document.getElementById("text").value = "谨慎驾驶 注意安全\n雨天路滑 请小心驾驶\n道路安全 靠大家\n道路千万条安全第一条";
+    let canvas = document.getElementById("ca");
+    //获取2d对象
+    let ctx = canvas.getContext("2d");
+
+    let currentPage = 0;
+    //文本数组
+    let textArray = [];
+    //坐标数组
+    let xyArray = [];
+    //坐标剧中坐标点
+    let xyInitArray = [];
+    let time = null;
+    function send() {
+      //获取文本域对象
+      let text = document.getElementById("text");
+      let textValue = text.value;
+      textArray = textValue.split("\n");
+      if (textArray.length == 1) {
+        textArray.push(textArray[0]);
+      }
+      for (let i = 0; i < textArray.length; i++) {
+        //计算初始化位置
+        initialize(textArray[i], i);
+      }
+      setTimeout(createTime, 3000);
+
+    }
+    function draw(text, fontSize, x, y) {
+      //canvas.width = canvas.width;
+      ctx.font = fontSize + "px Georgia";
+      ctx.fillStyle = "#FF0000"
+      ctx.fillText(text, x, y);
+    }
+
+    function initialize(textValue, index) {
+      //计算字体大小（（画布宽度-预留位置)/字体个数）
+      let fontSize = (canvas.width - 20) / textValue.length;
+      fontSize = Math.round(fontSize);
+      //如果字体超过屏幕高度，
+      if (fontSize >= canvas.height) {
+        fontSize = (canvas.height - 50)
+      }
+      //绘制画布
+      let y = (canvas.height - 10 + fontSize) / 2;
+      let x = (canvas.width + 20 - textValue.length * fontSize) / 2;
+      xyInitArray.push({
+        x: x,
+        y: y
+      });
+      y = y + (index * 100);
+      xyArray.push({
+        x: x,
+        y: y
+      });
+      draw(textValue, fontSize, x, y);
+
+    }
+    //刷新坐标
+    function skip() {
+      //每次坐标减1
+      canvas.width = canvas.width;
+      for (let i = 0; i < textArray.length; i++) {
+        let textValue = textArray[i];
+        let xyEntity = xyArray[i];
+        //计算字体大小（（画布宽度-预留位置)/字体个数）
+        let fontSize = (canvas.width - 20) / textValue.length;
+        fontSize = Math.round(fontSize);
+        //如果字体超过屏幕高度，
+        if (fontSize >= canvas.height) {
+          fontSize = (canvas.height - 50)
+        }
+
+        y = xyEntity.y - 1;
+        x = xyEntity.x;
+        xyArray[i] = {
+          x: x,
+          y: y
+        };
+
+        //判断当前页是否到达执行位置，到达指定位置，停止移动
+
+        if (i == currentPage + 1) {
+          let xyInit = xyInitArray[i];
+          if (y <= xyInit.y) {
+
+            clearInterval(time);
+            currentPage++;
+            //判断是否已经是最后一页，如果是最后一页，进行重新绘制，更换数组位置，重新渲染
+            if (currentPage == textArray.length - 1) {
+              //最后一页
+              //更换文本
+              let textArrayCopy = [];
+              textArrayCopy.push(textArray[textArray.length - 1])
+              for (let j = 0; j < textArray.length; j++) {
+                textArrayCopy.push(textArray[j]);
+                if (j == textArray.length - 2) {
+                  break;
+                }
+              }
+              textArray = textArrayCopy;
+              //初始化变量    
+              xyArray = [];
+              xyInitArray = [];
+              for (let i = 0; i < textArray.length; i++) {
+
+
+                //计算初始化位置
+                initialize(textArray[i], i);
+              }
+              currentPage = 0;
+
+            }
+            setTimeout(createTime, 3000);
+
+            draw(textValue, fontSize, x, y);
+            break;
+
+
+          }
+        }
+
+
+        draw(textValue, fontSize, x, y);
+      }
+
+    }
+
+    function createTime() {
+      time = setInterval(skip, 40);
+    }
+  </script>
+</body>
+
+</html>

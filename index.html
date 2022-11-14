@@ -18,6 +18,7 @@
       background-color: #000;
       background-size: cover;
       height: 100vh;
+      background: url('./img/bg.jpg') no-repeat;
     }
 
     body::after {
@@ -43,16 +44,16 @@
     .love_you {
       top: 45%;
       font-family: Georgia, 'Times New Roman', Times, serif;
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: pink;
+      font-size: 2.5rem;
+      /* font-weight: bold; */
+      color: #ea80b0;
       letter-spacing: .05rem;
       -moz-animation: love-xf 1.2s alternate ease-in-out;
       -webkit-animation: love-xf 1.2s alternate ease-in-out;
       animation: love-xf 1.2s alternate ease-in-out;
       user-select: none;
-      -webkit-text-shadow: 0 0 8px #fff;
-      text-shadow: 0 0 8px #fff;
+      /* -webkit-text-shadow: 0 0 8px #fff; */
+      /* text-shadow: 0 0 8px #fff; */
     }
 
     #lovexf {
@@ -84,22 +85,19 @@
 </head>
 
 <body>
-  <p class="love_you" onclick="playAudio()">我爱你哟~listen
-    <a href="listen.html">对你的想说的话~</a>
+  <p class="love_you" onclick="playAudio()">爱你哟~
+    <!-- <a href="listen.html">对你的想说的话~</a> -->
   </p>
 
-  <audio
-    src="https://webfs.ali.kugou.com/202211081340/d2205163afcff34a4705e1ca4d915594/KGTX/CLTX001/b18d453224097d52798f88399210a2af.mp3"
-    loop="loop" id="play"></audio>
+  <audio src="./video/缺氧 - 安苏羽.mp3" loop="loop" id="play"></audio>
   <canvas id="lovexf" onclick="pauseAudio()"></canvas>
   <script>
     var x = document.getElementById("play");
-
     function playAudio() {
       x.play();
     }
 
-    function pauseAudio() {
+    function pauseAudio(e) {
       x.pause();
     }
 
@@ -288,7 +286,7 @@
         context.closePath();
         // create the fill
         // context.fillStyle = '#c88ffe';
-        context.fillStyle = 'pink';
+        context.fillStyle = '#ea80b0';
         context.fill();
         // create the image
         var image = new Image();
